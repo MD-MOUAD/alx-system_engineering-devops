@@ -13,7 +13,6 @@ int infinite_while(void)
 {
 	while (1)
 	{
-		printf("hacked\n");
 		sleep(1);
 	}
 	return (0);
