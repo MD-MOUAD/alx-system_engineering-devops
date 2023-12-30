@@ -9,4 +9,4 @@ FILE=$1
 IP=$2
 USERNAME=$3
 SSH_KEY=$4
-scp -o StrictHostKeyChecking=no -i $SSH_KEY $FILE $USERNAME@$IP:~/
+scp -o StrictHostKeyChecking=no $FILE -i $SSH_KEY $USERNAME@$IP:~/
