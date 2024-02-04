@@ -4,76 +4,39 @@ import requests
 import sys
 
 
+def json_response(url, data=None):
+    """get response using get request"""
+    if data:
+        if isinstance(requests.get(url).json(), list):
+            return [result.get(data) for result in requests.get(url).json()]
+        else:
+            return requests.get(url).json().get(data)
+    else:
+        return requests.get(url).json()
+
+
 def main():
-    """ def com """
-    id = sys.argv[1]
-    url = f'https://jsonplaceholder.typicode.com/'
-    users = f'users?id={id}'
-    todos = f'todos?userId={id}'
-    done = f'{todos}&completed=true'
-    notDone = f'{todos}&completed=false'
-    userData = requests.get(f'{url}{users}').json()
-    Name = userData[0].get("name")
-    todosData = requests.get(f'{url}{todos}').json()
-    todosDone = requests.get(f'{url}{done}').json()
-    doneN = len(todosDone)
-    totalN = len(todosData)
-    print(f'Employee {Name} is done with tasks({doneN}/{totalN}):')
-    for task in todosDone:
-        print("\t "+task.get("title"))
+    """main function"""
+
+    url = "https://jsonplaceholder.typicode.com"
+    EmployeeID = sys.argv[1]
+    # urls:
+    user_data = f"{url}/users/{EmployeeID}"
+    user_tasks = f"{url}/todos?userId={EmployeeID}"
+    completed_tasks = f"{user_tasks}&completed=true"
+
+    # data:
+    EMPLOYEE_NAME = json_response(user_data, "name")
+    NUMBER_OF_DONE_TASKS = len(json_response(completed_tasks))
+    TOTAL_NUMBER_OF_TASKS = len(json_response(user_tasks))
+
+    # output
+    print("Employee {} is done with tasks({}/{}):".format(
+        EMPLOYEE_NAME, NUMBER_OF_DONE_TASKS, TOTAL_NUMBER_OF_TASKS
+    ))
+    for TASK_TITLE in json_response(completed_tasks, "title"):
+        print(f"\t {TASK_TITLE}")
 
 
 if __name__ == "__main__":
     main()
-
-"""
-
-Employee *NAME* is done with tasks(*DONE*/*TOTAL*):
-     *TITLE*
-     *TITLE*
-     *TITLE*
-
-
-https://jsonplaceholder.typicode.com/users?id=1
-{
-  "id": 1,
-  "name": "Leanne Graham",
-  "username": "Bret",
-  "email": "Sincere@april.biz",
-  "address": {
-    "street": "Kulas Light",
-    "suite": "Apt. 556",
-    "city": "Gwenborough",
-    "zipcode": "92998-3874",
-    "geo": {
-      "lat": "-37.3159",
-      "lng": "81.1496"
-    }
-  },
-  "phone": "1-770-736-8031 x56442",
-  "website": "hildegard.org",
-  "company": {
-    "name": "Romaguera-Crona",
-    "catchPhrase": "Multi-layered client-server neural-net",
-    "bs": "harness real-time e-markets"
-  }
-}
-https://jsonplaceholder.typicode.com/todos?userId=5
-[
-  {
-    "userId": 1,
-    "id": 1,
-    "title": "delectus aut autem",
-    "completed": false
-  },
-  {
-    "userId": 1,
-    "id": 2,
-    "title": "quis ut nam facilis et officia qui",
-    "completed": false
-  },
-  ]
-
-https://jsonplaceholder.typicode.com/todos?userId=5&completed=true
-https://jsonplaceholder.typicode.com/todos?userId=5&completed=false
-  """
